@@ -21,6 +21,8 @@ namespace AKEmployeeBook
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.ThreadException += HandleThreadException;
+            AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
             var host = Host.CreateDefaultBuilder()
              .ConfigureServices((hostContext, services) =>
              {
@@ -76,5 +78,18 @@ namespace AKEmployeeBook
             services.AddLogging(configure => configure.AddConsole());
             services.AddLogging(configure => configure.AddDebug());
         }
+
+        private static void HandleThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            Exception ex = e.Exception;
+            MessageBox.Show($"An unhandled exception occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (e.ExceptionObject as Exception)!;
+            MessageBox.Show($"An unhandled exception occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
     }
 }
